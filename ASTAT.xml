@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Component xmlns="http://www.red5studios.com/"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.red5studios.com/ ../../../schemas/component.xsd">
+	<Info
+		title="ASTAT"
+		author="Godofdrakes"
+		description="An addon to track a variety of stats."
+		url=""
+		uiVersion="1000"
+	/>
+
+	<Events>
+		<Event name="ON_COMPONENT_LOAD"			bind="OnComponentLoad"/>
+		<Event name="ON_COMBAT_EVENT"			bind="OnKill"/>
+		<Event name="ON_HIT_TARGET_CONFIRM"		bind="OnDamage"/>
+		<Event name="ON_DEATH"					bind="OnDeath"/>
+		<Event name="ON_DOWNED"					bind="OnDowned"/>
+		<Event name="ON_EXPERIENCE_CHANGED"		bind="OnExp"/>
+		<Event name="ON_ABILITY_USED"			bind="OnAbility"/>
+		<Event name="ON_HEALTH_CHANGED"			bind="OnHealthChanged"/>
+
+		<Event name="ON_PLAYER_READY"			bind="OnPlayerReady" />
+		<Event name="ON_TEAM_CHANGED"			bind="OnTeamChange"/>
+		<Event name="ON_BATTLEFRAME_CHANGED"	bind="OnFrameChange" />
+		<Event name="ON_WEAPON_CHANGED"			bind="OnWeaponChange"/>
+		<Event name="ON_BATTLEFRAME_TERMINAL"	bind="OnBFToggle" />
+		<Event name="ON_INPUT_MODE_CHANGED"		bind="OnInputChange" />
+	</Events>
+
+
+	<Textures>
+
+		<Texture name="astatbg" src="components/MainUI/HUD/Tips/tips_base.dds" premultiplied="false">
+			<Region name="bg" top="0" bottom="120" left="0" right="200" />
+		</Texture>
+
+	</Textures>
+
+	<BluePrints>
+		<BluePrint name="ASTATText" instantiable="true">
+			<Text name="ASTATType" dimensions="center-x:50%; center-y:50%; left:0; top:4; width:60%; height:14" style="font:Demi_9; halign:left; wrap:false; valign:center;"/>
+			<Text name="ASTATStat" dimensions="center-x:50%; center-y:50%; right:100%+10; top:4; width:40%; height:14" style="font:Demi_9; halign:center; wrap:false; valign:center;"/>
+		</BluePrint>
+	</BluePrints>
+
+	<Frames>
+		<HUDFrame name="ASTATMain" dimensions="center-x:50%; center-y:50%; left:0%; top:0%; width:160; height:32" style="alpha:1" visible="true">
+			<Children>
+				<Group id="ASTATInfo" dimensions="dock:fill" style="alpha:1">
+					<StillArt id="ASTATBG" dimensions="center-x:50%; center-y:50%; left:0-20%; top:0-10%; width:140%; height:120%" style="alpha:1; texture:astatbg; region:bg; "/>
+					<Text id="ASTATTitle" dimensions="center-x:50%; center-y:50%; left:0%; top:10; width:100%; height:16" style="font:Demi_9; halign:center; wrap:false; valign:center;"/>
+					<Group id="ASTATGroup" dimensions="center-x:50%; center-y:50%; left:0%; top:26; width:90%; height:14" style="alpha:1"/>
+				</Group>
+			</Children>
+		</HUDFrame>
+	</Frames>
+
+</Component>
