@@ -213,7 +213,6 @@ require "lib/lib_NavWheel"
 		InterfaceOptions.SetCallbackFunc(function(id, val)
 			OnMessage({type=id, data=val})
 		end, "ASTAT")
-		SetInterfaceOptions()
 	end
 
 	function OnMessage(args)
@@ -249,9 +248,9 @@ require "lib/lib_NavWheel"
 		InterfaceOptions.DisableOption("PVE", not SETTINGS.ASTAT)
 		InterfaceOptions.DisableOption("PVP", not SETTINGS.ASTAT)
 		InterfaceOptions.DisableOption("STATCHECK_TIME", not SETTINGS.ASTAT)
-		InterfaceOptions.DisableOption("DISPLAY_FRAME", not SETTINGS.ASTAT)
-		InterfaceOptions.DisableOption("DISPLAY_MOB", not SETTINGS.ASTAT)
-		InterfaceOptions.DisableOption("DISPLAY_MISC", not SETTINGS.ASTAT)
+		--InterfaceOptions.DisableOption("DISPLAY_FRAME", not SETTINGS.ASTAT)
+		--InterfaceOptions.DisableOption("DISPLAY_MOB", not SETTINGS.ASTAT)
+		--InterfaceOptions.DisableOption("DISPLAY_MISC", not SETTINGS.ASTAT)
 		InterfaceOptions.DisableOption("DEV", not SETTINGS.ASTAT)
 	end
 
@@ -289,7 +288,7 @@ require "lib/lib_NavWheel"
 			local name = Game.GetTargetInfo(args["entityId"]).name
 			local ispvp = Game.IsInPvP()
 			local faction = Game.GetTargetInfo(args["entityId"]).faction
-			if (SETTINGS.PVE == (not ispvp) or SETTINGS.PVP == ispvp) then
+			if (SETTINGS.PVE == (not ispvp) or SETTINGS.PVP == ispvp and args["entityId"] ~= TEMP.ID) then
 				--Critical Hits +
 					if (args.critical) then
 						STATS.MISC.CRITICAL = STATS.MISC.CRITICAL + 1
@@ -391,12 +390,16 @@ require "lib/lib_NavWheel"
 	function OnPlayerReady(agrs)
 		TEMP.ID = Player.GetTargetId()
 		TEMP.NAME = normalize(Player.GetInfo())
+		WeaponUpdate()
+		HealthUpdate()
+		EnergyUpdate()
 		OnFrame()
 		OnExp()
 		if (SETTINGS.DEV and SETTINGS.DEV_READY) then
 			log("player_Name: "..tostring(TEMP.NAME))
 			log("player_ID: "..tostring(TEMP.ID))
 		end
+		Component.SaveSetting("astat_current_player", TEMP.NAME)
 		log("Ready. Tracking stats.")
 		TEMP.READY = true
 	end
@@ -411,9 +414,32 @@ require "lib/lib_NavWheel"
 		end
 	end
 
-	function OnHealthChanged(args)
-		if (SETTINGS.ASTAT) then
-			Component.SaveSetting("astat_current_health", args)
+	function WeaponUpdate(args)
+		if (SETTINGS.ASTAT and TEMP.READY) then
+			local weapon_info = {}
+			local temp_weap = Player.GetWeaponState(true)
+			weapon_info.ammo = temp_weap.Ammo
+			weapon_info.clip = temp_weap.Clip
+			weapon_info.weapon = Player.GetWeaponInfo().WeaponType
+
+			Component.SaveSetting("astat_current_weapon", weapon_info)
+		end
+	end
+
+	function HealthUpdate(args)
+		if (SETTINGS.ASTAT and TEMP.READY) then
+			local vitals_info = Player.GetLifeInfo()
+
+			Component.SaveSetting("astat_current_health", vitals_info)
+		end
+	end
+
+	function EnergyUpdate(args)
+		if (SETTINGS.ASTAT and TEMP.READY) then
+			local energy_info = {}
+			energy_info.current, energy_info.max = Player.GetEnergy()
+
+			Component.SaveSetting("astat_current_energy", energy_info)
 		end
 	end
 
@@ -422,26 +448,26 @@ require "lib/lib_NavWheel"
 		STATS = {}
 		PLAYERS[TEMP.NAME] = false
 		Component.SaveSetting("ASTAT_PLAYERS", PLAYERS)
-		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_PVP", nil)
-		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_PVE", nil)
-		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ACCORDASSAULT", nil)
-		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ASTREKFIRECAT", nil)
-		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ODMTIGERCLAW", nil)
-		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ACCORDRECON", nil)
-		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ODMNIGHTHAWK", nil)
-		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ASTREKRAPTOR", nil)
-		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ACCORDENGINEER", nil)
-		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ASTREKELECTRON", nil)
-		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ODMBASTION", nil)
-		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ACCORDBIOTECH", nil)
-		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ASTREKRECLUSE", nil)
-		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ODMDRAGONFLY", nil)
-		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ACCORDDREADNAUGHT", nil)
-		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ASTREKRHINO", nil)
-		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ODMMAMMOTH", nil)
-		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_TIME_PLAYED", nil)
-		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_MISC", nil)
-		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_MOBS", nil)
+		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_PVP", PREP_GLOBAL)
+		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_PVE", PREP_GLOBAL)
+		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ACCORDASSAULT", PREP_FRAME)
+		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ASTREKFIRECAT", PREP_FRAME)
+		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ODMTIGERCLAW", PREP_FRAME)
+		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ACCORDRECON", PREP_FRAME)
+		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ODMNIGHTHAWK", PREP_FRAME)
+		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ASTREKRAPTOR", PREP_FRAME)
+		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ACCORDENGINEER", PREP_FRAME)
+		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ASTREKELECTRON", PREP_FRAME)
+		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ODMBASTION", PREP_FRAME)
+		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ACCORDBIOTECH", PREP_FRAME)
+		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ASTREKRECLUSE", PREP_FRAME)
+		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ODMDRAGONFLY", PREP_FRAME)
+		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ACCORDDREADNAUGHT", PREP_FRAME)
+		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ASTREKRHINO", PREP_FRAME)
+		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_ODMMAMMOTH", PREP_FRAME)
+		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_TIME_PLAYED", TIME_PLAYED)
+		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_MISC", PREP_MISC)
+		Component.SaveSetting("ASTAT_"..TEMP.NAME.."_MOBS", {})
 	end
 
 	function LoadStats()
@@ -491,8 +517,7 @@ require "lib/lib_NavWheel"
 			for k,v in pairs(TIME_PLAYED) do if (not STATS.TIME_PLAYED[k]) then STATS.TIME_PLAYED[k] = v end end
 		STATS.MISC				= (Component.GetSetting("ASTAT_"..TEMP.NAME.."_MISC") or PREP_MISC)
 			for k,v in pairs(PREP_MISC) do if (not STATS.MISC[k]) then STATS.MISC[k] = v end end
-		STATS.MOBS				= (Component.GetSetting("ASTAT_"..TEMP.NAME.."_MOBS") or PREP_MOB)
-			for k,v in pairs(PREP_MOB) do if (not STATS.MOBS[k]) then STATS.MOBS[k] = v end end
+		STATS.MOBS				= (Component.GetSetting("ASTAT_"..TEMP.NAME.."_MOBS") or {})
 	end
 
 	function SaveStats()

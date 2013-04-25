@@ -18,14 +18,22 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../schemas/component.xsd">
 		<Event name="ON_DOWNED"					bind="OnDowned"/>
 		<Event name="ON_EXPERIENCE_CHANGED"		bind="OnExp"/>
 		<Event name="ON_ABILITY_USED"			bind="OnAbility"/>
-		<Event name="ON_HEALTH_CHANGED"			bind="OnHealthChanged"/>
 
 		<Event name="ON_PLAYER_READY"			bind="OnPlayerReady" />
-		<Event name="ON_TEAM_CHANGED"			bind="OnTeamChange"/>
-		<Event name="ON_BATTLEFRAME_CHANGED"	bind="OnFrameChange" />
-		<Event name="ON_WEAPON_CHANGED"			bind="OnWeaponChange"/>
-		<Event name="ON_BATTLEFRAME_TERMINAL"	bind="OnBFToggle" />
-		<Event name="ON_INPUT_MODE_CHANGED"		bind="OnInputChange" />
+
+		<Event name="ON_WEAPON_CHANGED"			bind="WeaponUpdate"/>
+		<Event name="ON_WEAPON_BURST"			bind="WeaponUpdate"/>
+		<Event name="ON_WEAPON_RELOAD"			bind="WeaponUpdate"/>
+
+		<Event name="ON_TOOK_HIT"				bind="HealthUpdate"/>
+		<Event name="ON_HEALTH_CHANGED"			bind="HealthUpdate"/>
+
+		<Event name="ON_ENERGY_CHANGED"			bind="EnergyUpdate"/>
+
+		<Event name="ON_SQUAD_JOIN"				bind="JoinSquad"/>
+		<Event name="ON_SQUAD_LEAVE"			bind="LeaveSquad"/>
+		<Event name="ON_SQUAD_ROSTER_UPDATE"	bind="UpdateSquad"/>
+		<Event name="ON_SQUAD_VITALS_UPDATE"	bind="UpdateSquad"/>
 	</Events>
 
 
