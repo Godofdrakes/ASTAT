@@ -384,6 +384,8 @@ require "lib/lib_NavWheel"
 			if (SETTINGS.DEV and SETTINGS.DEV_FRAME) then log("OnFrame\n"..tostring(args)) end
 			TEMP.FRAME = normalize(Player.GetCurrentLoadout().name)
 			TEMP.ARCHTYPE = Player.GetCurrentLoadout().archtype
+			Component.SaveSetting("astat_current_frame", TEMP.FRAME)
+			Component.SaveSetting("astat_current_archtype", TEMP.ARCHTYPE)
 		end
 	end
 

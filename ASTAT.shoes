@@ -1,2 +1,105 @@
+
+require 'json'
+
+astat_File = ENV["LOCALAPPDATA"]+"\\Red 5 Studios\\Firefall\\ui_savedsettings\\astat.JSON"
+names = {
+  "ACCORDASSAULT"		=> "Assault",
+  "ASTREKFIRECAT"		=> "Firecat",
+  "ODMTIGERCLAW"		=> "Tigerclaw",
+  "ACCORDRECON"			=> "Recon",
+  "ODMNIGHTHAWK"		=> "Nighthawk",
+  "ASTREKRAPTOR"		=> "Raptor",
+  "ACCORDENGINEER"		=> "Engineer",
+  "ASTREKELECTRON"		=> "Electron",
+  "ODMBASTION"			=> "Bastion",
+  "ACCORDBIOTECH"		=> "Biotech",
+  "ASTREKRECLUSE"		=> "Recluse",
+  "ODMDRAGONFLY"		=> "Dragonfly",
+  "ACCORDDREADNAUGHT"	=> "Dreadnaught",
+  "ASTREKRHINO"			=> "Rhino",
+  "ODMMAMMOTH"			=> "Mammoth",
+}
+
+class Player_base
+  attr_accessor :name, :health, :frame, :archtype, :berzerker, :firecat, :tigerclaw, :recon, :nighthawk, :raptor, :bunker, :electron, :bastion, :medic, :recluse, :dragonfly, :guardian, :rhino, :mammoth, :misc, :pvp, :pve, :time, :mobs
+  def initialize(name, json)
+  	@name = name.downcase
+    @berzerker = JSON.parse(json["astat_"+@name+"_accordassault"][1])
+    @firecat = JSON.parse(json["astat_"+@name+"_astrekfirecat"][1])
+    @tigerclaw = JSON.parse(json["astat_"+@name+"_odmtigerclaw"][1])
+    @recon = JSON.parse(json["astat_"+@name+"_accordrecon"][1])
+    @nighthawk = JSON.parse(json["astat_"+@name+"_odmnighthawk"][1])
+    @raptor = JSON.parse(json["astat_"+@name+"_astrekraptor"][1])
+    @bunker = JSON.parse(json["astat_"+@name+"_accordengineer"][1])
+    @electron = JSON.parse(json["astat_"+@name+"_astrekelectron"][1])
+    @bastion = JSON.parse(json["astat_"+@name+"_odmbastion"][1])
+    @medic = JSON.parse(json["astat_"+@name+"_accordbiotech"][1])
+    @recluse = JSON.parse(json["astat_"+@name+"_astrekrecluse"][1])
+    @dragonfly = JSON.parse(json["astat_"+@name+"_odmdragonfly"][1])
+    @guardian = JSON.parse(json["astat_"+@name+"_accorddreadnaught"][1])
+    @rhino = JSON.parse(json["astat_"+@name+"_astrekrhino"][1])
+    @mammoth = JSON.parse(json["astat_"+@name+"_odmmammoth"][1])
+    @misc = JSON.parse(json["astat_"+@name+"_misc"][1])
+    @pvp = JSON.parse(json["astat_"+@name+"_pvp"][1])
+    @pve = JSON.parse(json["astat_"+@name+"_pve"][1])
+    @time = JSON.parse(json["astat_"+@name+"_time_played"][1])
+    @mobs = JSON.parse(json["astat_"+@name+"_mobs"][1])
+    @frame = json["astat_current_frame"][1]
+    @archtype = json["astat_current_archtype"][1]
+    @health = JSON.parse(json["astat_current_health"][1])
+  end
+
+  def to_s
+    @name[0].upcase+@name[1..-1]
+  end
+
+  public
+  def update(json)
+    @berzerker = JSON.parse(json["astat_"+@name+"_accordassault"][1])
+    @firecat = JSON.parse(json["astat_"+@name+"_astrekfirecat"][1])
+    @tigerclaw = JSON.parse(json["astat_"+@name+"_odmtigerclaw"][1])
+    @recon = JSON.parse(json["astat_"+@name+"_accordrecon"][1])
+    @nighthawk = JSON.parse(json["astat_"+@name+"_odmnighthawk"][1])
+    @raptor = JSON.parse(json["astat_"+@name+"_astrekraptor"][1])
+    @bunker = JSON.parse(json["astat_"+@name+"_accordengineer"][1])
+    @electron = JSON.parse(json["astat_"+@name+"_astrekelectron"][1])
+    @bastion = JSON.parse(json["astat_"+@name+"_odmbastion"][1])
+    @medic = JSON.parse(json["astat_"+@name+"_accordbiotech"][1])
+    @recluse = JSON.parse(json["astat_"+@name+"_astrekrecluse"][1])
+    @dragonfly = JSON.parse(json["astat_"+@name+"_odmdragonfly"][1])
+    @guardian = JSON.parse(json["astat_"+@name+"_accorddreadnaught"][1])
+    @rhino = JSON.parse(json["astat_"+@name+"_astrekrhino"][1])
+    @mammoth = JSON.parse(json["astat_"+@name+"_odmmammoth"][1])
+    @misc = JSON.parse(json["astat_"+@name+"_misc"][1])
+    @pvp = JSON.parse(json["astat_"+@name+"_pvp"][1])
+    @pve = JSON.parse(json["astat_"+@name+"_pve"][1])
+    @time = JSON.parse(json["astat_"+@name+"_time_played"][1])
+    @mobs = JSON.parse(json["astat_"+@name+"_mobs"][1])
+    @frame = json["astat_current_frame"][1]
+    @archtype = json["astat_current_archtype"][1]
+    @health = JSON.parse(json["astat_current_health"][1])
+  end
+end
+
+def Astat_Update(file)
+  JSON.parse( (File.read( file ).to_s)[10..-1] )
+end
+
+json = Astat_Update(astat_File)
+player = Player_base.new(json["astat_current_player"][1], json)
+
 Shoes.app title: "ASTAT" do
+  stack do
+  	flow do
+  	  @player_name = tagline player.to_s+": "+names[player.frame]
+  	  @player_health = tagline player.health["Health"]
+  	end
+  	@player_health_bar = progress width: 1.0
+  	animate do
+  	  json = Astat_Update(astat_File)
+  	  player.update(json)
+  	  @player_health.text = (player.health["Health"].to_s)+"/"+(player.health["MaxHealth"].to_s)
+  	  @player_health_bar.fraction = player.health["Health"].to_f / player.health["MaxHealth"].to_f
+  	end
+  end
 end

@@ -1,12 +1,15 @@
 require 'json'
 
-players = ""
 astat_File = ENV["LOCALAPPDATA"]+"\\Red 5 Studios\\Firefall\\ui_savedsettings\\astat.JSON"
 
 json = JSON.parse( (File.read( astat_File ).to_s)[10..-1] )
 current_player = json["astat_current_player"][1]
 
-class Player
+def firefall_json_parse (json, variable)
+  return JSON.parse(json[variable][1])
+end
+
+class Player_base
   attr_reader :name
   attr_accessor :berzerker, :firecat, :tigerclaw, :recon, :nighthawk, :raptor, :bunker, :electron, :bastion, :medic, :recluse, :dragonfly, :guardian, :rhino, :mammoth, :misc, :pvp, :pve, :time, :mobs
   def initialize(name, json)
@@ -62,7 +65,7 @@ class Player
   end
 end
 
-player = Player.new(current_player, json)
+player = Player_base.new(current_player, json)
 puts player.berzerker["DAMAGE"]
 
 while true do
