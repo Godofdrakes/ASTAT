@@ -16,7 +16,7 @@ require "lib/lib_NavWheel"
 --Variables
 	--Stats
 		local STATS = {}
-		local PREP_GLOBAL 	= {KILLS=0, DAMAGE=0, DOWNED=0, DEATHS=0, HEAL=0, REPAIR=0}
+		local PREP_GLOBAL 	= {KILLS=0, DAMAGE=0, DOWNED=0, DEATHS=0, HEAL=0, REPAIR=0, CRITICAL=0}
 		local PREP_FRAME 	= {KILLS=0, DAMAGE=0, DOWNED=0, DEATHS=0, HEAL=0, REPAIR=0, CRITICAL=0, TIME={SEC=0, MIN=0, HOUR=0, DAY=0}, ABILITY={}, EXP={CURRENT=0, LIFETIME=0}}
 		local PREP_MOB 		= {FACTION="neutral", KILLS=0, DAMAGE=0, DOWNED=0}
 		local TIME_PLAYED	= {SEC=0, MIN=0, HOUR=0, DAY=0}
@@ -29,6 +29,7 @@ require "lib/lib_NavWheel"
 
 	--System
 		local PLAYERS = {}
+		local SLASH = {}
 		local TEMP = {READY=false, FRAME="none", ARCHTYPE="none", NAME="none", ID=0, ID=0, X=0, Y=0, Z=0, WINDOW="none"}
 		local SETTINGS = {
 			ASTAT			= true,
@@ -101,6 +102,7 @@ require "lib/lib_NavWheel"
 			HEIGHT		= "Highest Altitude: ",
 			CRITICAL	= "Critical Hits: ",
 			KILLSTREAK	= "Highest Killstreak: ",
+			FACTION		= "Faction: ",
 		}
 		local NAV_INIT = {
 			base 			= {sortWeight=1, 	node="astat_base", 						title="ASTAT", 					parent={node="hud_root", 				weight=0}, 	icon={texture="icons", 			region="fashion"},				desc="Stat tracking"},
@@ -128,7 +130,7 @@ require "lib/lib_NavWheel"
 			guardian 		= {sortWeight=23, 	node="astat_frame_guardian_guardian", 	title="Accord", 				parent={node="astat_frame_guardian", 	weight=2}, 	icon={texture="battleframes", 	region="guardian"},				action="ACCORDDREADNAUGHT"},
 			rhino 			= {sortWeight=24, 	node="astat_frame_guardian_rhino", 		title="Rhino",		 			parent={node="astat_frame_guardian", 	weight=1}, 	icon={texture="battleframes", 	region="guardian"},				action="ASTREKRHINO"},
 			mammoth 		= {sortWeight=25, 	node="astat_frame_guardian_mammoth", 	title="Mammoth", 				parent={node="astat_frame_guardian", 	weight=0}, 	icon={texture="battleframes", 	region="guardian"},				action="ODMMAMMOTH"},
-			mob 			= {sortWeight=29, 	node="astat_mobs", 						title="Mob Stats", 				parent={node="astat_base", 				weight=2}, 	icon={texture="aag_icons", 		region="execute"},				action="MOBS",						desc="Stats on the loacl wildlife."},
+			mob 			= {sortWeight=29, 	node="astat_mobs", 						title="Mob Stats", 				parent={node="astat_base", 				weight=2}, 	icon={texture="aag_icons", 		region="execute"},				desc="Stats on the loacl wildlife."},
 			misc 			= {sortWeight=26, 	node="astat_misc", 						title="Misc", 					parent={node="astat_base", 				weight=1}, 	icon={texture="icons",			region="game"},					action="MISC",						desc="Other stats"},
 			clear 			= {sortWeight=27, 	node="astat_clear", 					title="Clear all stats",		parent={node="astat_base", 				weight=0},  icon={texture="aag_icons", 		region="execute"},				desc="This cannot be undone!"},
 			clear_yes 		= {sortWeight=28, 	node="astat_clear_yes", 				title="Yes", 					parent={node="astat_clear", 			weight=0}, 	icon={texture="icons", 			region="no"}, 					action="clear",						desc="Seriously, no take-backs."},
@@ -213,6 +215,7 @@ require "lib/lib_NavWheel"
 		InterfaceOptions.SetCallbackFunc(function(id, val)
 			OnMessage({type=id, data=val})
 		end, "ASTAT")
+		LIB_SLASH.BindCallback({slash_list = "astat", description = "/astat text - Searches for mobs who's name contains text than you have attacked.", func = SearchMobs})
 	end
 
 	function OnMessage(args)
@@ -289,24 +292,21 @@ require "lib/lib_NavWheel"
 			local ispvp = Game.IsInPvP()
 			local faction = Game.GetTargetInfo(args["entityId"]).faction
 			if (SETTINGS.PVE == (not ispvp) or SETTINGS.PVP == ispvp and args["entityId"] ~= TEMP.ID) then
-				--Critical Hits +
-					if (args.critical) then
-						STATS[TEMP.FRAME].CRITICAL = STATS[TEMP.FRAME].CRITICAL + 1
-					end
-
 				--Frame Damage/Heal/Repair +
 					if (args["damage"] > 0) then STATS[TEMP.FRAME].DAMAGE = STATS[TEMP.FRAME].DAMAGE + args["damage"]
 					elseif (TEMP.ARCHTYPE == "medic") then STATS[TEMP.FRAME].HEAL = STATS[TEMP.FRAME].HEAL + args["damage"]
 					elseif (args["damageType"] == "Repair") then STATS[TEMP.FRAME].REPAIR = STATS[TEMP.FRAME].REPAIR + args["damage"]
 					end
 
-				--(PvE and Mob)/PvP Damage +
+				--PvE/PvP Damage +, Critical Hits +
 					if (not ispvp) then
 						if (STATS.MOBS[name] == nil) then STATS.MOBS[name] = PREP_MOB; STATS.MOBS[name].FACTION = faction end
 						STATS.MOBS[name].DAMAGE = STATS.MOBS[name].DAMAGE + 1
 						STATS.PVE.DAMAGE = STATS.PVE.DAMAGE + 1
+						if (args.critical) then STATS[TEMP.FRAME].CRITICAL = STATS[TEMP.FRAME].CRITICAL + 1; STATS.PVE.CRITICAL = STATS.PVE.CRITICAL + 1; end
 					else
 						STATS.PVP.DAMAGE = STATS.PVP.DAMAGE + 1
+						if (args.critical) then STATS[TEMP.FRAME].CRITICAL = STATS[TEMP.FRAME].CRITICAL + 1; STATS.PVP.CRITICAL = STATS.PVP.CRITICAL + 1; end
 					end
 			end
 		end
@@ -575,16 +575,65 @@ require "lib/lib_NavWheel"
 		end
 
 		if (stat = "PVE")
+			puts("-=- PVE -=-")
+			puts(STRINGS.KILLS..STATS.PVE.KILLS)
+			puts(STRINGS.DAMAGE..STATS.PVE.DAMAGE)
+			puts(STRINGS.CRITICAL..STATS.PVE.CRITICAL)
+			puts(STRINGS.HEAL..STATS.PVE.HEAL)
+			puts(STRINGS.REPAIR..STATS.PVE.REPAIR)
+			puts(STRINGS.DOWNED..STATS.PVE.DOWNED)
+			puts(STRINGS.DEATHS..STATS.PVE.DEATHS)
+			puts("-=- END -=-")
 		end
 
 		if (stat = "PVP")
+			puts("-=- PVP -=-")
+			puts(STRINGS.KILLS..STATS.PVP.KILLS)
+			puts(STRINGS.DAMAGE..STATS.PVP.DAMAGE)
+			puts(STRINGS.CRITICAL..STATS.PVP.CRITICAL)
+			puts(STRINGS.HEAL..STATS.PVP.HEAL)
+			puts(STRINGS.REPAIR..STATS.PVP.REPAIR)
+			puts(STRINGS.DOWNED..STATS.PVP.DOWNED)
+			puts(STRINGS.DEATHS..STATS.PVP.DEATHS)
+			puts("-=- END -=-")
 		end
 
 		if (stat = "PLAYER")
+			puts("-=- PLAYER -=-")
+			puts(STRINGS.KILLS..(STATS.PVP.KILLS+STATS.PVE.KILLS))
+			puts(STRINGS.DAMAGE..(STATS.PVP.DAMAGE+STATS.PVE.DAMAGE))
+			puts(STRINGS.CRITICAL..(STATS.PVP.CRITICAL+STATS.PVE.CRITICAL))
+			puts(STRINGS.HEAL..(STATS.PVP.HEAL+STATS.PVE.HEAL))
+			puts(STRINGS.REPAIR..(STATS.PVP.REPAIR+STATS.PVE.REPAIR))
+			puts(STRINGS.DOWNED..(STATS.PVP.DOWNED+STATS.PVE.DOWNED))
+			puts(STRINGS.DEATHS..(STATS.PVP.DEATHS+STATS.PVE.DEATHS))
+			puts("-=- END -=-")
+		end
+	end
+
+	SLASH.SearchMobs = function(text)
+		text = text:lower()
+		puts("-=- Searching for: "..text.." -=-")
+
+		local num_found = 0
+		for k,v in pairs(STATS.MOBS)
+			num_found = num_found + 1
+			if ((k:lower()):find(text)) then
+				puts("-=- "..k.." -=-")
+				for key,val in pairs(STATS.MOBS[k])
+					puts(STRINGS[key]..tostring(val))
+				end
+			end
 		end
 
-		if (stat = "MOBS")
+		if (num_found == 0) then
+			puts("No mobs with the string '"..text.."' found.")
+			puts("Check spelling or make sure you have attacked the mob you are looking for.")
+		else
+			puts("-- Found "..tostring(num_found).." mobs.")
 		end
+
+		puts("-=- END -=-")
 	end
 
 --[[Widgets functions
