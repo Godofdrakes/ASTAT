@@ -103,35 +103,35 @@ require "lib/lib_NavWheel"
 			KILLSTREAK	= "Highest Killstreak: ",
 		}
 		local NAV_INIT = {
-			base 			= {sortWeight=1, 	node="astat_base", 						title="ASTAT", 					parent={node="hud_root", 				weight=0}, 	icon={texture="icons", 			region="fashion"}, 				desc="Stat tracking"},
-			player			= {sortWeight=2, 	node="astat_player", 					title="Player",					parent={node="astat_base", 				weight=6}, 	icon={texture="icons", 			region="spawner"},				desc="All stats"},
-			pve 			= {sortWeight=3, 	node="astat_pve", 						title="PvE", 					parent={node="astat_base", 				weight=5}, 	icon={texture="icons", 			region="two_swords"},			desc="Stats tracked in PvE"},
-			pvp 			= {sortWeight=4, 	node="astat_pvp", 						title="PvP", 					parent={node="astat_base", 				weight=4}, 	icon={texture="icons", 			region="sword_and_flag"},		desc="Stats tracked in PvP"},
+			base 			= {sortWeight=1, 	node="astat_base", 						title="ASTAT", 					parent={node="hud_root", 				weight=0}, 	icon={texture="icons", 			region="fashion"},				desc="Stat tracking"},
+			player			= {sortWeight=2, 	node="astat_player", 					title="Player",					parent={node="astat_base", 				weight=6}, 	icon={texture="icons", 			region="spawner"},				action="ALL",						desc="All stats"},
+			pve 			= {sortWeight=3, 	node="astat_pve", 						title="PvE", 					parent={node="astat_base", 				weight=5}, 	icon={texture="icons", 			region="two_swords"},			action="PVE",						desc="Stats tracked in PvE"},
+			pvp 			= {sortWeight=4, 	node="astat_pvp", 						title="PvP", 					parent={node="astat_base", 				weight=4}, 	icon={texture="icons", 			region="sword_and_flag"},		action="PVP",						desc="Stats tracked in PvP"},
 			frame 			= {sortWeight=5, 	node="astat_frame", 					title="Battleframes",			parent={node="astat_base", 				weight=3}, 	icon={texture="icons", 			region="battleframe_station"},	desc="Per frame stats"},
 			frame_berzerker = {sortWeight=6, 	node="astat_frame_berzerker", 			title="Assault Frames",			parent={node="astat_frame", 			weight=4}, 	icon={texture="battleframes", 	region="berzerker"}},
-			berzerker 		= {sortWeight=7, 	node="astat_frame_berzerker_berzerker",	title="Accord", 				parent={node="astat_frame_berzerker", 	weight=2}, 	icon={texture="battleframes", 	region="berzerker"}},
-			firecat 		= {sortWeight=8, 	node="astat_frame_berzerker_firecat", 	title="FireCat", 				parent={node="astat_frame_berzerker", 	weight=1}, 	icon={texture="battleframes", 	region="berzerker"}},
-			tigerclaw 		= {sortWeight=9, 	node="astat_frame_berzerker_tigerclaw",	title="TigerClaw", 				parent={node="astat_frame_berzerker", 	weight=0}, 	icon={texture="battleframes", 	region="berzerker"}},
+			berzerker 		= {sortWeight=7, 	node="astat_frame_berzerker_berzerker",	title="Accord", 				parent={node="astat_frame_berzerker", 	weight=2}, 	icon={texture="battleframes", 	region="berzerker"},			action="ACCORDASSAULT"},
+			firecat 		= {sortWeight=8, 	node="astat_frame_berzerker_firecat", 	title="FireCat", 				parent={node="astat_frame_berzerker", 	weight=1}, 	icon={texture="battleframes", 	region="berzerker"},			action="ASTREKFIRECAT"},
+			tigerclaw 		= {sortWeight=9, 	node="astat_frame_berzerker_tigerclaw",	title="TigerClaw", 				parent={node="astat_frame_berzerker", 	weight=0}, 	icon={texture="battleframes", 	region="berzerker"},			action="ODMTIGERCLAW"},
 			frame_recon 	= {sortWeight=10, 	node="astat_frame_recon", 				title="Recon Frames",			parent={node="astat_frame", 			weight=3}, 	icon={texture="battleframes", 	region="recon"}},
-			recon 			= {sortWeight=11, 	node="astat_frame_recon_recon", 		title="Accord", 				parent={node="astat_frame_recon", 		weight=2}, 	icon={texture="battleframes", 	region="recon"}},
-			nighthawk		= {sortWeight=12, 	node="astat_frame_recon_nighthawk",		title="Nighthawk", 				parent={node="astat_frame_recon", 		weight=1}, 	icon={texture="battleframes", 	region="recon"}},
-			raptor 			= {sortWeight=13, 	node="astat_frame_recon_raptor", 		title="Raptor", 				parent={node="astat_frame_recon", 		weight=0}, 	icon={texture="battleframes", 	region="recon"}},
+			recon 			= {sortWeight=11, 	node="astat_frame_recon_recon", 		title="Accord", 				parent={node="astat_frame_recon", 		weight=2}, 	icon={texture="battleframes", 	region="recon"},				action="ACCORDRECON"},
+			nighthawk		= {sortWeight=12, 	node="astat_frame_recon_nighthawk",		title="Nighthawk", 				parent={node="astat_frame_recon", 		weight=1}, 	icon={texture="battleframes", 	region="recon"},				action="ODMNIGHTHAWK"},
+			raptor 			= {sortWeight=13, 	node="astat_frame_recon_raptor", 		title="Raptor", 				parent={node="astat_frame_recon", 		weight=0}, 	icon={texture="battleframes", 	region="recon"},				action="ASTREKRAPTOR"},
 			frame_bunker 	= {sortWeight=14, 	node="astat_frame_bunker", 				title="Engineer Frames",		parent={node="astat_frame", 			weight=2}, 	icon={texture="battleframes", 	region="bunker"}},
-			bunker 			= {sortWeight=15, 	node="astat_frame_bunker_bunker", 		title="Accord", 				parent={node="astat_frame_bunker", 		weight=2}, 	icon={texture="battleframes", 	region="bunker"}},
-			electron		= {sortWeight=16, 	node="astat_frame_bunker_electron",		title="Electron", 				parent={node="astat_frame_bunker", 		weight=1}, 	icon={texture="battleframes", 	region="bunker"}},
-			bastion			= {sortWeight=17, 	node="astat_frame_bunker_bastion", 		title="Bastion", 				parent={node="astat_frame_bunker", 		weight=0}, 	icon={texture="battleframes", 	region="bunker"}},
+			bunker 			= {sortWeight=15, 	node="astat_frame_bunker_bunker", 		title="Accord", 				parent={node="astat_frame_bunker", 		weight=2}, 	icon={texture="battleframes", 	region="bunker"},				action="ACCORDENGINEER"},
+			electron		= {sortWeight=16, 	node="astat_frame_bunker_electron",		title="Electron", 				parent={node="astat_frame_bunker", 		weight=1}, 	icon={texture="battleframes", 	region="bunker"},				action="ASTREKELECTRON"},
+			bastion			= {sortWeight=17, 	node="astat_frame_bunker_bastion", 		title="Bastion", 				parent={node="astat_frame_bunker", 		weight=0}, 	icon={texture="battleframes", 	region="bunker"},				action="ODMBASTION"},
 			frame_medic 	= {sortWeight=18, 	node="astat_frame_medic", 				title="Biotech Frames",			parent={node="astat_frame", 			weight=1}, 	icon={texture="battleframes", 	region="medic"}},
-			medic 			= {sortWeight=19, 	node="astat_frame_medic_medic", 		title="Accord", 				parent={node="astat_frame_medic", 		weight=2},	icon={texture="battleframes", 	region="medic"}},
-			recluse 		= {sortWeight=20, 	node="astat_frame_medic_recluse",		title="Recluse", 				parent={node="astat_frame_medic", 		weight=1},	icon={texture="battleframes", 	region="medic"}},
-			dragonfly 		= {sortWeight=21, 	node="astat_frame_medic_dragonfly",		title="Dragonfly", 				parent={node="astat_frame_medic", 		weight=0},	icon={texture="battleframes", 	region="medic"}},
+			medic 			= {sortWeight=19, 	node="astat_frame_medic_medic", 		title="Accord", 				parent={node="astat_frame_medic", 		weight=2},	icon={texture="battleframes", 	region="medic"},				action="ACCORDBIOTECH"},
+			recluse 		= {sortWeight=20, 	node="astat_frame_medic_recluse",		title="Recluse", 				parent={node="astat_frame_medic", 		weight=1},	icon={texture="battleframes", 	region="medic"},				action="ASTREKRECLUSE"},
+			dragonfly 		= {sortWeight=21, 	node="astat_frame_medic_dragonfly",		title="Dragonfly", 				parent={node="astat_frame_medic", 		weight=0},	icon={texture="battleframes", 	region="medic"},				action="ODMDRAGONFLY"},
 			frame_guardian 	= {sortWeight=22, 	node="astat_frame_guardian", 			title="Dreadnaught Frames",		parent={node="astat_frame", 			weight=0}, 	icon={texture="battleframes", 	region="guardian"}},
-			guardian 		= {sortWeight=23, 	node="astat_frame_guardian_guardian", 	title="Accord", 				parent={node="astat_frame_guardian", 	weight=2}, 	icon={texture="battleframes", 	region="guardian"}},
-			rhino 			= {sortWeight=24, 	node="astat_frame_guardian_rhino", 		title="Rhino",		 			parent={node="astat_frame_guardian", 	weight=1}, 	icon={texture="battleframes", 	region="guardian"}},
-			mammoth 		= {sortWeight=25, 	node="astat_frame_guardian_mammoth", 	title="Mammoth", 				parent={node="astat_frame_guardian", 	weight=0}, 	icon={texture="battleframes", 	region="guardian"}},
-			mob 			= {sortWeight=29, 	node="astat_mobs", 						title="Mob Stats", 				parent={node="astat_base", 				weight=2}, 	icon={texture="aag_icons", 		region="execute"}, 				desc="Stats on the loacl wildlife."},
-			misc 			= {sortWeight=26, 	node="astat_misc", 						title="Misc", 					parent={node="astat_base", 				weight=1}, 	icon={texture="icons",			region="game"}, 				desc="Other stats"},
-			clear 			= {sortWeight=27, 	node="astat_clear", 					title="Clear all stats",		parent={node="astat_base", 				weight=0},  icon={texture="aag_icons", 		region="execute"}, 				desc="This cannot be undone!"},
-			clear_yes 		= {sortWeight=28, 	node="astat_clear_yes", 				title="Yes", 					parent={node="astat_clear", 			weight=0}, 	icon={texture="icons", 			region="no"}, 					desc="Seriously, no take-backs."},
+			guardian 		= {sortWeight=23, 	node="astat_frame_guardian_guardian", 	title="Accord", 				parent={node="astat_frame_guardian", 	weight=2}, 	icon={texture="battleframes", 	region="guardian"},				action="ACCORDDREADNAUGHT"},
+			rhino 			= {sortWeight=24, 	node="astat_frame_guardian_rhino", 		title="Rhino",		 			parent={node="astat_frame_guardian", 	weight=1}, 	icon={texture="battleframes", 	region="guardian"},				action="ASTREKRHINO"},
+			mammoth 		= {sortWeight=25, 	node="astat_frame_guardian_mammoth", 	title="Mammoth", 				parent={node="astat_frame_guardian", 	weight=0}, 	icon={texture="battleframes", 	region="guardian"},				action="ODMMAMMOTH"},
+			mob 			= {sortWeight=29, 	node="astat_mobs", 						title="Mob Stats", 				parent={node="astat_base", 				weight=2}, 	icon={texture="aag_icons", 		region="execute"},				action="MOBS",						desc="Stats on the loacl wildlife."},
+			misc 			= {sortWeight=26, 	node="astat_misc", 						title="Misc", 					parent={node="astat_base", 				weight=1}, 	icon={texture="icons",			region="game"},					action="MISC",						desc="Other stats"},
+			clear 			= {sortWeight=27, 	node="astat_clear", 					title="Clear all stats",		parent={node="astat_base", 				weight=0},  icon={texture="aag_icons", 		region="execute"},				desc="This cannot be undone!"},
+			clear_yes 		= {sortWeight=28, 	node="astat_clear_yes", 				title="Yes", 					parent={node="astat_clear", 			weight=0}, 	icon={texture="icons", 			region="no"}, 					action="clear",						desc="Seriously, no take-backs."},
 		}
 		local NAV_SORT = {
 		}
@@ -291,7 +291,7 @@ require "lib/lib_NavWheel"
 			if (SETTINGS.PVE == (not ispvp) or SETTINGS.PVP == ispvp and args["entityId"] ~= TEMP.ID) then
 				--Critical Hits +
 					if (args.critical) then
-						STATS.MISC.CRITICAL = STATS.MISC.CRITICAL + 1
+						STATS[TEMP.FRAME].CRITICAL = STATS[TEMP.FRAME].CRITICAL + 1
 					end
 
 				--Frame Damage/Heal/Repair +
@@ -549,6 +549,44 @@ require "lib/lib_NavWheel"
 		Component.GenerateEvent("ASTAT_SAVED", STATS[TEMP.FRAME])
 	end
 
+--Stat Display (in chat)
+	function ShowStat(stat)
+		if (not STATS[stat]) then
+			puts("No such stat: "..stat)
+			return nil
+		end
+
+		if (NAME[stat]) then
+			puts("-=- "..(NAME[stat]).." -=-")
+			puts(STRINGS.KILLS..STATS[stat].KILLS)
+			puts(STRINGS.DAMAGE..STATS[stat].DAMAGE)
+			puts(STRINGS.CRITICAL..STATS[stat].CRITICAL)
+			if (stat == "ACCORDBIOTECH" or stat == "ASTREKRECLUSE" or stat == "ODMDRAGONFLY") then puts(STRINGS.HEAL..STATS[stat].HEAL)
+			if (stat == "ACCORDENGINEER" or stat == "ASTREKELECTRON" or stat == "ODMBASTION") then puts(STRINGS.REPAIR..STATS[stat].REPAIR)
+			puts(STRINGS.DOWNED..STATS[stat].DOWNED)
+			puts(STRINGS.DEATHS..STATS[stat].DEATHS)
+			if (STATS[stat].ABILITY ~= nil and STATS[stat].ABILITY ~= {}) then
+				puts("-- Abilities Used")
+				for k,v in pairs(STATS[stat].ABILITY) do
+					puts(tostring(k).." - "..tostring(v))
+				end
+			end
+			puts("-=- END -=-")
+		end
+
+		if (stat = "PVE")
+		end
+
+		if (stat = "PVP")
+		end
+
+		if (stat = "PLAYER")
+		end
+
+		if (stat = "MOBS")
+		end
+	end
+
 --[[Widgets functions
 	function dw_RemoveWidgets()
 		-- remove all others
@@ -705,9 +743,11 @@ require "lib/lib_NavWheel"
 				NAV_NODE[v]:SetTitle(NAV_INIT[v].title)
 				NAV_NODE[v]:SetParent(NAV_INIT[v].parent.node, NAV_INIT[v].parent.weight)
 				NAV_NODE[v]:GetIcon():SetTexture(NAV_INIT[v].icon.texture, NAV_INIT[v].icon.region)
-				if NAV_INIT[v].desc then NAV_NODE[v]:SetDescription(NAV_INIT[v].desc) end
-				if NAV_INIT[v].action then
-					--Do action
+				if (NAV_INIT[v].desc) then NAV_NODE[v]:SetDescription(NAV_INIT[v].desc) end
+				if (STATS[NAV_NODE[v].action]) then
+					NAV_NODE[v]:SetAction(function()
+						ShowStat(NAV_NODE[v].action)
+					end)
 				end
 			end
 		end
